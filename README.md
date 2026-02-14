@@ -1,4 +1,4 @@
-
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -11,8 +11,8 @@
             font-family: 'Arial', sans-serif;
             background: linear-gradient(135deg, #ff9a9e, #fecfef, #ffecd2);
             color: #333;
-            overflow: hidden;
-            height: 100vh;
+            overflow: auto; /* Changed from hidden to auto for mobile scrolling */
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -23,10 +23,12 @@
             text-align: center;
             position: relative;
             z-index: 10;
+            padding: 1rem; /* Added padding for mobile */
+            max-width: 100%; /* Ensure it fits screen */
         }
 
         h1 {
-            font-size: 3rem;
+            font-size: 2.5rem; /* Slightly smaller for mobile */
             color: #e91e63;
             margin-bottom: 2rem;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
@@ -35,27 +37,30 @@
         .buttons {
             display: flex;
             justify-content: center;
-            gap: 2rem;
+            gap: 1rem; /* Reduced gap for mobile */
+            flex-wrap: wrap; /* Allow wrapping if needed */
         }
 
         button {
-            padding: 1rem 2rem;
-            font-size: 1.5rem;
+            padding: 1rem 1.5rem; /* Adjusted padding */
+            font-size: 1.2rem; /* Smaller font for mobile */
             border: none;
             border-radius: 50px;
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            min-height: 44px; /* Minimum touch target for mobile */
+            min-width: 100px; /* Ensure clickable */
         }
 
         #yes-btn {
             background: linear-gradient(45deg, #ff6b6b, #feca57);
             color: white;
-            transform: scale(1.2);
+            transform: scale(1.1); /* Slightly smaller scale */
         }
 
-        #yes-btn:hover {
-            transform: scale(1.3);
+        #yes-btn:hover, #yes-btn:active {
+            transform: scale(1.2);
             box-shadow: 0 6px 12px rgba(0,0,0,0.3);
         }
 
@@ -86,7 +91,7 @@
 
         .hearts {
             position: absolute;
-            font-size: 2rem;
+            font-size: 1.5rem; /* Smaller for mobile */
             animation: float 3s ease-in-out infinite;
         }
 
@@ -100,6 +105,7 @@
             flex-direction: column;
             align-items: center;
             gap: 1rem;
+            padding: 1rem;
         }
 
         .question.active {
@@ -111,7 +117,8 @@
             font-size: 1rem;
             border: 2px solid #e91e63;
             border-radius: 10px;
-            width: 200px;
+            width: 80%; /* Responsive width */
+            max-width: 300px;
         }
 
         .summary {
@@ -119,6 +126,7 @@
             flex-direction: column;
             align-items: center;
             gap: 1rem;
+            padding: 1rem;
         }
 
         .summary.active {
@@ -137,13 +145,33 @@
 
         .heart, .sparkle, .star {
             position: absolute;
-            font-size: 2rem;
+            font-size: 1.5rem; /* Smaller for mobile */
             animation: sparkle 2s ease-in-out infinite;
         }
 
         @keyframes sparkle {
             0%, 100% { opacity: 0.5; transform: scale(1); }
             50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* Media queries for better mobile responsiveness */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            button {
+                font-size: 1rem;
+                padding: 0.8rem 1.2rem;
+            }
+            .buttons {
+                gap: 0.5rem;
+            }
+            .heart, .sparkle, .star {
+                font-size: 1.2rem;
+            }
+            .hearts {
+                font-size: 1.2rem;
+            }
         }
     </style>
 </head>
@@ -203,7 +231,9 @@
         <div class="summary" id="summary">
             <h2>Ringkasan Jawabanmu:</h2>
             <p id="summary-text"></p>
-            <p>selamat hari valentine, untuk seseorang yang terlalu jauh  di bilang dekat, tapi terlalu dekat untuk di bilangjauh! 💕</p>
+            <p>selamat hari valentine,
+             untuk seseorang yang terlalu jauh  di bilang dekat,
+              tapi terlalu dekat untuk di bilangjauh! 💕</p>
             <button id="save-btn">Save this memory</button>
         </div>
     </div>
@@ -221,13 +251,16 @@
         let currentQuestion = 0;
         const answers = {};
 
-        // NO button behavior: move randomly on hover or mouse move
+        // NO button behavior: move randomly on hover or touch (for mobile)
         noBtn.addEventListener('mouseenter', moveNoBtn);
         noBtn.addEventListener('mousemove', moveNoBtn);
+        noBtn.addEventListener('touchstart', moveNoBtn); // Added for mobile touch
 
         function moveNoBtn() {
-            const x = Math.random() * (window.innerWidth - 100);
-            const y = Math.random() * (window.innerHeight - 100);
+            const maxX = window.innerWidth - noBtn.offsetWidth;
+            const maxY = window.innerHeight - noBtn.offsetHeight;
+            const x = Math.random() * maxX;
+            const y = Math.random() * maxY;
             noBtn.style.left = `${x}px`;
             noBtn.style.top = `${y}px`;
             noBtn.style.transform = `scale(${0.5 + Math.random() * 0.5})`; // Random shrink
